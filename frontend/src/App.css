@@ -1,0 +1,198 @@
+:root {
+  --terminal-bg: #1e1e1e;
+  --terminal-text: #f0f0f0;
+  --terminal-green: #4af626;
+  --terminal-blue: #45a1ff;
+  --terminal-yellow: #f2f84e;
+  --terminal-red: #ff4444;
+  --terminal-border: #3c3c3c;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: #121212;
+  font-family: 'Courier New', monospace;
+  color: var(--terminal-text);
+}
+
+.terminal {
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+}
+
+.terminal-header {
+  background-color: #2d2d2d;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--terminal-border);
+}
+
+.terminal-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.terminal-button {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.terminal-button.close {
+  background-color: var(--terminal-red);
+}
+
+.terminal-button.minimize {
+  background-color: var(--terminal-yellow);
+}
+
+.terminal-button.maximize {
+  background-color: var(--terminal-green);
+}
+
+.terminal-title {
+  margin-left: 15px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.terminal-body {
+  flex: 1;
+  background-color: var(--terminal-bg);
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.terminal-prompt {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.prompt-user {
+  color: var(--terminal-green);
+  font-weight: bold;
+}
+
+.prompt-path {
+  color: var(--terminal-blue);
+}
+
+.prompt-symbol {
+  color: var(--terminal-text);
+  margin: 0 5px;
+}
+
+.prompt-command {
+  color: var(--terminal-text);
+}
+
+textarea {
+  background-color: #252525;
+  border: 1px solid var(--terminal-border);
+  color: var(--terminal-text);
+  font-family: 'Courier New', monospace;
+  padding: 12px;
+  border-radius: 4px;
+  resize: none;
+  flex: 1;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--terminal-blue);
+  box-shadow: 0 0 0 2px rgba(69, 161, 255, 0.2);
+}
+
+.terminal-input {
+  color: #e0e0e0;
+}
+
+.terminal-output {
+  color: #a0a0a0;
+  background-color: #1a1a1a;
+}
+
+.terminal-buttons-container {
+  display: flex;
+  gap: 10px;
+  padding: 5px 0;
+}
+
+.terminal-button-action {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+}
+
+.terminal-button-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.terminal-button-action.load {
+  background-color: var(--terminal-blue);
+  color: white;
+}
+
+.terminal-button-action.analyze {
+  background-color: var(--terminal-green);
+  color: #1e1e1e;
+}
+
+.terminal-button-action.clear {
+  background-color: var(--terminal-red);
+  color: white;
+}
+
+.terminal-button-action:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.terminal-footer {
+  background-color: #2d2d2d;
+  padding: 5px 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #aaa;
+  border-top: 1px solid var(--terminal-border);
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+}
+
+/* Efectos de terminal */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.prompt-symbol::after {
+  content: "_";
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+}
