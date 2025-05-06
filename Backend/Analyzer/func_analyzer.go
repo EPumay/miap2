@@ -100,89 +100,80 @@ func fn_rmdisk(input string) (respuesta string) {
 }
 
 func fn_fdisk(input string) (respuesta string) {
+	// Definir flags
 	fs := flag.NewFlagSet("fdisk", flag.ExitOnError)
 	size := fs.Int("size", 0, "Tamaño")
 	path := fs.String("path", "", "Ruta")
 	name := fs.String("name", "", "Nombre")
-	unit := fs.String("unit", "k", "Unidad")
+	unit := fs.String("unit", "m", "Unidad")
 	type_ := fs.String("type", "p", "Tipo")
-	fit := fs.String("fit", "wf", "Ajuste")
-	delete_ := fs.String("delete", "", "Eliminar particion (Fast/Full)")
-
-	// Parsear los flags
-	fs.Parse(os.Args[1:])
+	fit := fs.String("fit", "", "Ajuste")
+	delete_ := fs.String("delete", "", "Eliminar partición (Fast/Full)")
 
 	// Encontrar los flags en el input
 	matches := re.FindAllStringSubmatch(input, -1)
 
 	// Procesar el input
 	for _, match := range matches {
-		flagName := strings.ToLower(match[1]) // Convertir a minúsculas
-		flagValue := match[2]                 // Obtener el valor de la flag
-
+		flagName := match[1]
+		flagValue := strings.ToLower(match[2])
 		flagValue = strings.Trim(flagValue, "\"")
-
-		switch flagName {
-		case "size", "fit", "unit", "path", "name", "type", "delete":
-			fs.Set(flagName, flagValue)
-		default:
-			fmt.Println("Error: Flag not found")
-		}
+		fs.Set(flagName, flagValue)
 	}
 
-	*name = strings.ToLower(*name)
-	*unit = strings.ToLower(*unit)
-	*type_ = strings.ToLower(*type_)
-	*fit = strings.ToLower(*fit)
-	*delete_ = strings.ToLower(*delete_)
-	fmt.Print(*fit)
-
+	// Validaciones para la opción -delete
 	if *delete_ != "" {
 		if *path == "" || *name == "" {
-			fmt.Println("Error: Path y Name son obligatorios para eliminar una particion")
-			respuesta = "Error: Path y Name son obligatorios para eliminar una particion"
+			fmt.Println("Error: Para eliminar una partición, se requiere 'path' y 'name'.")
+			respuesta = "Error: Para eliminar una partición, se requiere 'path' y 'name'."
 			return respuesta
 		}
+		// Llamar a la función que elimina la partición
 		respuesta = DiskManagement.DeletePartition(*path, *name, *delete_)
-		return respuesta
+		return
 	}
 
-	// Convertir el nombre y la unidad a minúsculas
-
-	// Validaciones
+	// Validaciones para la creación de particiones
 	if *size <= 0 {
-		fmt.Println("Error: Size must be greater than 0")
-		respuesta = "Error: Size must be greater than 0"
+		fmt.Println("Error: El tamaño debe ser mayor a 0")
+		respuesta = "Error: El tamaño debe ser mayor a 0"
 		return respuesta
+
 	}
 
 	if *path == "" {
-		fmt.Println("Error: Path is required")
-		return "Error: Path is required"
+		fmt.Println("Error: La ruta es requerida")
+		respuesta = "Error: La ruta es requerida"
+		return respuesta
+
 	}
 
-	// Si no se proporcionó un fit, usar el valor predeterminado "w"
+	// Usar ajuste por defecto si no se proporciona
 	if *fit == "" {
 		*fit = "w"
 	}
 
-	if *fit != "bf" && *fit != "ff" && *fit != "wf" {
-		fmt.Println("Error: Fit must be 'bf', 'ff', or 'wf'")
-		respuesta = "Error: Fit must be 'bf', 'ff', or 'wf'"
+	// Validar fit
+	if *fit != "b" && *fit != "f" && *fit != "w" {
+		fmt.Println("Error: El ajuste debe ser 'b', 'f', o 'w'")
+		respuesta = "Error: El ajuste debe ser 'b', 'f', o 'w'"
 		return respuesta
 	}
 
-	if *unit != "k" && *unit != "m" && *unit != "b" {
-		fmt.Println("Error: Unit must be 'k', 'm', or 'b'")
-		return "Error: Unit must be 'k' or 'm' or 'b'"
+	if *unit != "k" && *unit != "m" {
+		fmt.Println("Error: La unidad debe ser 'k' o 'm'")
+		respuesta = "Error: La unidad debe ser 'k' o 'm'"
+		return respuesta
 	}
 
 	if *type_ != "p" && *type_ != "e" && *type_ != "l" {
-		fmt.Println("Error: Type must be 'p', 'e', or 'l'")
-		return "Error: Type must be 'p', 'e', or 'l'"
+		fmt.Println("Error: El tipo debe ser 'p', 'e', o 'l'")
+		respuesta = "Error: El tipo debe ser 'p', 'e', o 'l'"
+		return respuesta
 	}
 
-	// Llamar a la función
+	// Llamar a la función que ejecuta el fdisk
+
 	respuesta = DiskManagement.Fdisk(*size, *path, *name, *unit, *type_, *fit)
 	return respuesta
 }
